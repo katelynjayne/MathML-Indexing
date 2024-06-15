@@ -1,7 +1,7 @@
 from mathml_extractor import operator_extractor
 from collections import Counter
 import os
-from initialize_bplustree import dataset_path
+from initialize_trees import dataset_path
 
 def get_index(filename: str):
     '''

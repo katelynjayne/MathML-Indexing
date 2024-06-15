@@ -1,6 +1,6 @@
 import treeMatch_patical_match2 as tm
 from query_tree import query_bplus_tree, get_top_matches, get_avg_score, get_max_score, query_b_tree
-from initialize_bplustree import dataset_path
+from initialize_trees import dataset_path
 from time import time
 import os
 from mathml_extractor import operator_extractor
