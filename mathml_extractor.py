@@ -1,5 +1,6 @@
 from xml.etree import ElementTree
 import os
+from collections import Counter
 
 def make_tree(filename: str):
     '''
@@ -67,6 +68,18 @@ def operand_extractor(filename: str):
     identifiers = root.findall(f".//{ns}mi")
     return len(numbers) + len(identifiers)
 
+def get_dominant_operator(filename: str):
+    '''
+    Given a MathML file, generates the dominant operator for index in clustering and secondary approach.
+    Returns the most frequent operator or, if multiple operators with the highest frequency, returns first in the file.
+    '''
+    operators = operator_extractor(filename)
+    if operators:
+        counts = Counter(operators)
+        max_count = max(counts.values())
+        most_frequent = [operator for operator, freq in counts.items() if freq == max_count]
+        return most_frequent[0]
+    return None
 
 if __name__ == "__main__":
     all_the_folders = os.listdir('./../../Downloads/dataset_full/dataset_full/math/') #may need to change path depending on where the dataset is stored on your machine

@@ -1,23 +1,13 @@
-from mathml_extractor import operator_extractor
-from collections import Counter
+from mathml_extractor import get_dominant_operator
 import os
-from initialize_trees import dataset_path
 
-def get_index(filename: str):
-    '''
-    Given a MathML file, generates an index for the clustering approach.
-    Returns the most frequent operator or, if multiple operators with the highest frequency, returns first in the file.
-    '''
-    operators = operator_extractor(filename)
-    if operators:
-        counts = Counter(operators)
-        max_count = max(counts.values())
-        most_frequent = [operator for operator, freq in counts.items() if freq == max_count]
-        return most_frequent[0]
-    return None
-
+dataset_path = "./../../Downloads/dataset_full/dataset_full/math/"
 
 def secondary_indexing():
+    '''
+    This function parses the entire dataset and returns a secondary index dictionary.
+    Make sure you've adjusted the dataset_path variable for your machine.
+    '''
     all_the_folders = os.listdir(dataset_path)
     entire_dataset = []
     for folder in all_the_folders:
@@ -33,15 +23,23 @@ def secondary_indexing():
         
     indexes = {}
     for file in entire_dataset:
-        index = get_index(file)
+        index = get_dominant_operator(file)
         if index:
             if index not in indexes:
                 indexes[index] = []
 
             indexes[index].append(file)
     return indexes
+
+def clustering():
+    '''
+    will reorganize the dataset so like files are together, and a data structure for clustering indexing
+    not yet implemented
+    '''
+    pass
+
 if __name__ == "__main__":
     dict = secondary_indexing()
-    dom_op = get_index("./../../Downloads/dataset_full/dataset_full/math/107931/question/3.xml")
+    dom_op = get_dominant_operator("./../../Downloads/dataset_full/dataset_full/math/107931/question/3.xml")
     files = dict[dom_op]
     print(f"{"./../../Downloads/dataset_full/dataset_full/math/107931/question/3.xml" in files}")

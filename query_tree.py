@@ -9,15 +9,17 @@ def get_top_matches(file_score_dict):
     '''
     ranked_files_with_score = sorted(file_score_dict.items(), key=lambda item: item[1], reverse=True)
     ranked_files = [file[0] for file in ranked_files_with_score[:10]]
+
     if len(ranked_files) == 10 and len(ranked_files_with_score) > 10:
         min_score = ranked_files_with_score[9][1]
-        if min_score == ranked_files_with_score[0][1]: # this means there are more than 10 files with the top score. there may be a clearer way to check this.
+        if min_score == ranked_files_with_score[0][1]: # There are more than 10 files with the top score, add all with this score.
             for file, score in ranked_files_with_score[10:]:
                 if score == min_score:
                     ranked_files.append(file)
                 else:
                     break
-        elif min_score == ranked_files_with_score[10][1]: # i want this to do the opposite of the previous block. remove any file with the lowest score. idk if it's the move but it's what we doing
+        
+        elif min_score == ranked_files_with_score[10][1]: # If there are more files with the same score as the tenth, remove all with that score to prevent a too long list of results.
             for file, score in reversed(ranked_files_with_score[:10]):
                 if score == min_score:
                     ranked_files.remove(file)
@@ -25,28 +27,6 @@ def get_top_matches(file_score_dict):
                     break
 
     return ranked_files
-
-def query_b_tree(filename):
-    symbols = set(operator_extractor(filename))
-    num_operands = operand_extractor(filename)
-
-    with open('./pickled_b_tree.txt', 'rb') as file:
-        btree = pickle.load(file)
-
-    counts = {}
-    for symbol in symbols:
-        retrieved = btree.search(symbol)
-        if retrieved:
-            node, idx = retrieved
-            retrieved_files = node.values[idx]
-            for couple in retrieved_files:
-                file, operands = couple
-                if file in counts:
-                    counts[file][0] += 1
-                else:
-                    diff = -abs(num_operands - operands) # The negative absolute value is taken so that the greater difference will be a smaller number for ranking purposes.
-                    counts[file] = [1, diff]
-    return get_top_matches(counts)
 
 def get_max_score(file_score_dict):
     '''
@@ -58,7 +38,7 @@ def get_max_score(file_score_dict):
 def get_min_score(file_score_dict, ranked_files):
     '''
     This method takes in the dictionary of scores and the list of top files.
-    Returns the smallest score of the top scores that were returned by get_top_matches().
+    Returns the smallest score of the files that were returned by get_top_matches().
     '''
     ranked_files_with_score = sorted(file_score_dict.items(), key=lambda item: item[1], reverse=True)
     num_matches = len(ranked_files)
@@ -67,7 +47,7 @@ def get_min_score(file_score_dict, ranked_files):
 def get_avg_score(file_score_dict, ranked_files):
     '''
     This method takes in the dictionary of scores and the list of top files.
-    Returns the average score of the top scores that were returned by get_top_matches().
+    Returns the average score of the files that were returned by get_top_matches().
     '''
     ranked_files_with_score = sorted(file_score_dict.items(), key=lambda item: item[1], reverse=True)
     num_matches = len(ranked_files)
@@ -93,12 +73,35 @@ def query_bplus_tree(filename: str) -> list[str]:
             for couple in retrieved:
                 file = couple[0]
                 operands = couple[1]
-                diff = -abs(num_operands - operands) # The negative absolute value is taken so that the greater difference will be a smaller number for ranking purposes.
+                diff = -abs(num_operands - operands) 
+                # The negative absolute value is taken so that the greater difference will be a smaller number for ranking purposes.
                 if file in counts:
                     counts[file][0] += 1
                 else:
                     counts[file] = [1, diff]
 
+    return get_top_matches(counts)
+
+def query_b_tree(filename):
+    symbols = set(operator_extractor(filename))
+    num_operands = operand_extractor(filename)
+
+    with open('./pickled_b_tree.txt', 'rb') as file:
+        btree = pickle.load(file)
+
+    counts = {}
+    for symbol in symbols:
+        retrieved = btree.search(symbol)
+        if retrieved:
+            node, idx = retrieved
+            retrieved_files = node.values[idx]
+            for couple in retrieved_files:
+                file, operands = couple
+                if file in counts:
+                    counts[file][0] += 1
+                else:
+                    diff = -abs(num_operands - operands)
+                    counts[file] = [1, diff]
     return get_top_matches(counts)
 
 

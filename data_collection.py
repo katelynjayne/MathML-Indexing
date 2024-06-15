@@ -1,12 +1,12 @@
 import treeMatch_patical_match2 as tm
 from query_tree import query_bplus_tree, get_top_matches, get_avg_score, get_max_score, query_b_tree
-from initialize_trees import dataset_path
 from time import time
-import os
-from mathml_extractor import operator_extractor
+from mathml_extractor import operator_extractor, get_dominant_operator
 from xml.etree import ElementTree
-from clustering import secondary_indexing, get_index
+from clustering_and_secondary import secondary_indexing
 import pandas
+
+dataset_path = "./../../Downloads/dataset_full/dataset_full/math/"
 
 def bplus_approach(filename):
     start_time = time()
@@ -37,7 +37,7 @@ def sequential_approach(filename, entire_dataset):
 
 def secondary_approach(filename, idx_dict):
     start_time = time()
-    dom_op = get_index(filename)
+    dom_op = get_dominant_operator(filename)
     best_data = idx_dict[dom_op]
     fast_tree = tm.FastTreeMatch()
     scores = fast_tree.run(filename, best_data)
@@ -48,7 +48,7 @@ def secondary_approach(filename, idx_dict):
     execution_time = (end_time - start_time) * 1000
     avg_score = get_avg_score(scores, top_ten)
     max_score = get_max_score(scores)
-    # print(f"Execution time: {execution_time} ms")
+    # print(f"Secondary execution time: {execution_time} ms")
     return top_ten, execution_time, avg_score, max_score
 
 def b_tree_approach(filename):
@@ -67,27 +67,33 @@ def b_tree_approach(filename):
     return top_ten, execution_time, avg_score, max_score
 
 if __name__ == "__main__":
-    entire_dataset = []
-    question_files = []
-    all_the_folders = os.listdir(dataset_path)
-    for folder in all_the_folders:
-        if ".DS_Store" not in folder:
-            question_path = f"{dataset_path}{folder}/question/"
-            answer_path = f"{dataset_path}{folder}/answers/"
-            for file in os.listdir(question_path):
-                whole_path = question_path + file
-                entire_dataset.append(whole_path)
-                question_files.append(whole_path)
-            for file in os.listdir(answer_path):
-                whole_path = answer_path + file
-                entire_dataset.append(whole_path)
+    # entire_dataset = []
+    # question_files = []
+    # all_the_folders = os.listdir(dataset_path)
+    # for folder in all_the_folders:
+    #     if ".DS_Store" not in folder:
+    #         question_path = f"{dataset_path}{folder}/question/"
+    #         answer_path = f"{dataset_path}{folder}/answers/"
+    #         for file in os.listdir(question_path):
+    #             whole_path = question_path + file
+    #             entire_dataset.append(whole_path)
+    #             question_files.append(whole_path)
+    #         for file in os.listdir(answer_path):
+    #             whole_path = answer_path + file
+    #             entire_dataset.append(whole_path)
+
+    # Below code extracts the two hundred files used for other comparisons.
+    # Above (commented) code will create a list of all the files in the dataset if more files are needed.
 
     df = pandas.read_csv("./bplus_vs_seq_results.csv")
-    two_hundered_files = df["File"]
-    with open("./comparison_data.csv", 'w') as csv:
+    two_hundred_files = df["File"]
+    
+
+    with open("./comparison-results/bplus_v_b.csv", 'w') as csv:
         csv.write("B+ Execution Time (ms),B Execution Time (ms),B+ Avg Score,B Avg Score,B+ Max Score,B Max Score,Number of Operators,File\n")
 
-        for file in question_files:
+        for file in two_hundred_files:
+            # Skipping files with no operators or malformed MathML
             num_operators = len(operator_extractor(file))
             if num_operators == 0:
                 continue
@@ -97,28 +103,8 @@ if __name__ == "__main__":
                 continue
             
             bplus_result, bplus_time, bplus_avg, bplus_max = bplus_approach(file)
-            # seq_result, seq_time = sequential_approach(file, entire_dataset)
             b_result, b_time, b_avg, b_max = b_tree_approach(file)
-            # diff = len(set(bplus_result) ^ set(seq_result))
-            # same_top_result = False
-            # top_result_included = False
-            # if bplus_result[0] == seq_result[0]:
-            #     same_top_result = True
-            # if same_top_result or bplus_result[0] in seq_result or seq_result[0] in bplus_result:
-            #     top_result_included = True
-            
-
 
             csv.write(f"{bplus_time},{b_time},{bplus_avg},{b_avg},{bplus_max},{b_max},{num_operators},{file}\n")
             print(f"DONE: {bplus_time}, {b_time}, {file}")
-        
-
-'''
-Friendly reminder that the bplus tree does not handle files with no operator well... look into?
-in questions: 43.64% 0 operators
-in whole dataset: 42.6077% 0 operators
-problematic!!
-also... what's up with the malformed files??
-only .4% malformed
-'''
     
