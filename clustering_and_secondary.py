@@ -1,7 +1,6 @@
 from mathml_extractor import get_dominant_operator
 import os
 import shutil
-import time
 
 dataset_path = "./../../Downloads/dataset_full/dataset_full/math/"
 
@@ -60,7 +59,17 @@ def clustering(new_dataset_location):
 
     return locations
 
-        
+def get_clustering_dict(clustered_dataset_location):
+    '''
+    Relatively faster way to get the clustering index dictionary if the dataset has already been organized on your machine with clustering().
+    Takes in the path to the clustered dataset, returns the dictionary.
+    '''
+    operator_dict = secondary_indexing()
+    locations = {}
+    for operator in operator_dict.keys():
+        locations[operator] = f"{clustered_dataset_location}{operator}"
+    return locations
+
 
 if __name__ == "__main__":
     print(clustering("./../clustering_dataset/"))

@@ -86,11 +86,14 @@ def secondary_results():
     Avg B+ score: 0.8285296726625021
     Avg sec score: 0.8768250618743398
     Both had at least one score of 1 (perfect match) for every file.
+    Percent secondary better score: 52.5%
+    Percent B+ better score: 6.0%
+    Percent same average score: 42.0%
     '''
     df3 = pandas.read_csv("./comparison-results/bplus_v_sec.csv")
 
     bplus_time = df3["B+ Execution Time (ms)"]
-    sec_time = df3["Sec Execution Time (ms)"]
+    sec_time = df3["Secondary Execution Time (ms)"]
 
     print(f"Avg B+ time: {mean(bplus_time)}")
     print(f"Avg sec time: {mean(sec_time)}")
@@ -107,3 +110,72 @@ def secondary_results():
     print(f"Best B+ scores: {set(bplus_max_scores)}")
     print(f"Best sec scores: {set(sec_max_scores)}")
 
+    sec_percent = 0
+    bplus_percent = 0
+    same_percent = 0
+
+    for bplus, sec in zip(bplus_avg_scores, sec_avg_scores):
+        if bplus > sec:
+            bplus_percent += 1
+        elif sec > bplus:
+            sec_percent += 1
+        else:
+            same_percent += 1
+
+    print(f"Percent secondary better score: {sec_percent / 2}%")
+    print(f"Percent B+ better score: {bplus_percent / 2}%")
+    print(f"Percent same average score: {same_percent / 2}%")
+
+def clustering_results():
+    '''
+    Avg B+ time: 782.2261390401356
+    Avg clustering time: 7475.2446241046655
+    Avg B+ score: 0.8285296726625021
+    Avg clustering score: 0.8768250618743398
+    Both always had a score of 1 (perfect) in the results
+    Percent clustering better score: 52.5%
+    Percent B+ better score: 6.0%
+    Percent same average score: 42.0%
+    '''
+    df4 = pandas.read_csv("./comparison-results/bplus_v_clustering.csv")
+
+    bplus_time = df4["B+ Execution Time (ms)"]
+    c_time = df4["Clustering Execution Time (ms)"]
+
+    print(f"Avg B+ time: {mean(bplus_time)}")
+    print(f"Avg clustering time: {mean(c_time)}")
+
+    bplus_avg_scores = df4["B+ Avg Score"]
+    c_avg_scores = df4["Clustering Avg Score"]
+
+    print(f"Avg B+ score: {mean(bplus_avg_scores)}")
+    print(f"Avg clustering score: {mean(c_avg_scores)}")
+
+    bplus_max_scores = df4["B+ Max Score"]
+    c_max_scores = df4["Clustering Max Score"]
+
+    print(f"Best B+ scores: {set(bplus_max_scores)}")
+    print(f"Best clustering scores: {set(c_max_scores)}")
+
+
+    clus_percent = 0
+    bplus_percent = 0
+    same_percent = 0
+
+    for bplus, clus in zip(bplus_avg_scores, c_avg_scores):
+        if bplus > clus:
+            bplus_percent += 1
+        elif clus > bplus:
+            clus_percent += 1
+        else:
+            same_percent += 1
+
+    print(f"Percent clustering better score: {clus_percent / 2}%")
+    print(f"Percent B+ better score: {bplus_percent / 2}%")
+    print(f"Percent same average score: {same_percent / 2}%")
+
+secondary_results()
+
+def make_giant_csv():
+    with open("./comparison-results/all_results.csv", 'w') as final:
+        final.write()
