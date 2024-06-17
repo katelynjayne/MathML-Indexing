@@ -72,6 +72,7 @@ def get_dominant_operator(filename: str):
     '''
     Given a MathML file, generates the dominant operator for index in clustering and secondary approach.
     Returns the most frequent operator or, if multiple operators with the highest frequency, returns first in the file.
+    If no operators in the formula, returns None.
     '''
     operators = operator_extractor(filename)
     if operators:

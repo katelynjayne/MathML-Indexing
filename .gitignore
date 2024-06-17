@@ -1,2 +1,5 @@
 *.txt
+# ignore the pickled trees, as they should be generated differently by machine
 *.xml
+# ignore any test xml files in the directory
+__pycache__
