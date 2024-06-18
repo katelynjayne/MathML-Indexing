@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 from statistics import mean
 
-def sequential_analysis():
+def sequential_analysis_v1():
     '''
     Avg B+ Time: 743.073165713258
     Avg Seq Time: 80398.66825241354
@@ -51,6 +51,34 @@ def sequential_analysis():
             counter += 1
 
     print(f"Percent True: {counter / len(samesies)}")
+
+def sequential_analysis_v2():
+    '''
+    Avg B+ time: 785.9896652734102
+    Avg Seq time: 84263.91315697438
+    Avg B+ score: 0.8285296726625021
+    Avg Seq score: 0.898304428225348
+    '''
+
+    df = pandas.read_csv("./comparison-results/bplus_v_seq.csv")
+
+    bplus_time = df["B+ Execution Time (ms)"]
+    seq_time = df["Sequential Execution Time (ms)"]
+
+    print(f"Avg B+ time: {mean(bplus_time)}")
+    print(f"Avg Seq time: {mean(seq_time)}")
+
+    bplus_avg_scores = df["B+ Avg Score"]
+    seq_avg_scores = df["Seq Avg Score"]
+
+    print(f"Avg B+ score: {mean(bplus_avg_scores)}")
+    print(f"Avg Seq score: {mean(seq_avg_scores)}")
+
+    bplus_max_scores = df["B+ Max Score"]
+    seq_max_scores = df["Seq Max Score"]
+
+    print(f"Best B+ scores: {set(bplus_max_scores)}")
+    print(f"Best B scores: {set(seq_max_scores)}")
 
 def b_tree_analysis():
     '''
@@ -174,8 +202,42 @@ def clustering_results():
     print(f"Percent B+ better score: {bplus_percent / 2}%")
     print(f"Percent same average score: {same_percent / 2}%")
 
-secondary_results()
+def all_data_analysis():
+    df = pandas.read_csv("./comparison-results/all_data_combined.csv")
+    df_b = pandas.read_csv("./comparison-results/bplus_v_b.csv")
+    bplus_time = df["Average B+ Execution Time"]
+    more_bplus_time = df_b["B+ Execution Time (ms)"]
+    first = mean(bplus_time)
+    second = mean(more_bplus_time)
+    print(f"Overall B+ Execution time: {mean([first, second])}")
 
-def make_giant_csv():
-    with open("./comparison-results/all_results.csv", 'w') as final:
-        final.write()
+    fastest = df["Fastest Approach"]
+    labels = ["B+-Tree","B-Tree","Sequential","Secondary","Clustering"]
+    frequency = [0,0,0,0,0]
+    for result in fastest:
+        idx = labels.index(result)
+        frequency[idx] += 1
+    while 0 in frequency:
+        labels.remove(labels[frequency.index(0)])
+        frequency.remove(0)
+
+    plt.style.use("ggplot")
+    plt.pie(frequency, labels=labels, autopct='%1.1f%%')
+    plt.savefig("./comparison-results/fastest.png")
+
+    labels = []
+    frequency = []
+    best_scoring = df["Best Scoring Approach"]
+    for result in best_scoring:
+        if result not in labels:
+            labels.append(result)
+            frequency.append(0)
+        frequency[labels.index(result)] += 1
+    for i, label in enumerate(labels):
+        percent = (frequency[i] / sum(frequency)) * 100
+        rounded_percent = round(percent, 2)
+        labels[i] = f"{label} ({rounded_percent}%)"
+    plt.clf()
+    plt.pie(frequency)
+    plt.legend(labels, loc="lower left")
+    plt.savefig("./comparison-results/best_score.png")
