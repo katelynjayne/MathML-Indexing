@@ -7,7 +7,7 @@
 4) Clustering: 7475.2446241046655 ms  
 5) Sequential: 84263.91315697438 ms  
 
-### Percentages of each approach was the fastest to produce a result:  
+### Percentages of how frequently each approach was fastest to produce a result:  
 ![image](./fastest.png)
 
 ## AVERAGE SCORES
