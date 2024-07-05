@@ -209,10 +209,10 @@ def all_data_analysis():
     more_bplus_time = df_b["B+ Execution Time (ms)"]
     first = mean(bplus_time)
     second = mean(more_bplus_time)
-    print(f"Overall B+ Execution time: {mean([first, second])}")
+    # print(f"Overall B+ Execution time: {mean([first, second])}")
 
     fastest = df["Fastest Approach"]
-    labels = ["B+-Tree","B-Tree","Sequential","Secondary","Clustering"]
+    labels = ["Sequential","Secondary","B+-Tree","B-Tree","Clustering"]
     frequency = [0,0,0,0,0]
     for result in fastest:
         idx = labels.index(result)
@@ -221,23 +221,39 @@ def all_data_analysis():
         labels.remove(labels[frequency.index(0)])
         frequency.remove(0)
 
-    plt.style.use("ggplot")
-    plt.pie(frequency, labels=labels, autopct='%1.1f%%')
-    plt.savefig("./comparison-results/fastest.png")
 
-    labels = []
-    frequency = []
+    __, __, autotexts = plt.pie(frequency, labels=labels, autopct= '%1.2f%%', colors=["black","dimgray","darkgray","lightgray"])
+    for autotext in autotexts[:2]:
+        autotext.set_color('white')
+    plt.savefig("./comparison-results/fastest.png")
+    plt.clf()
+
+    labels = ["Sequential", "B+-Tree/B-Tree", "Clustering/Secondary"]
+    frequency = [0,0,0]
     best_scoring = df["Best Scoring Approach"]
     for result in best_scoring:
-        if result not in labels:
-            labels.append(result)
-            frequency.append(0)
-        frequency[labels.index(result)] += 1
-    for i, label in enumerate(labels):
-        percent = (frequency[i] / sum(frequency)) * 100
-        rounded_percent = round(percent, 2)
-        labels[i] = f"{label} ({rounded_percent}%)"
-    plt.clf()
-    plt.pie(frequency)
-    plt.legend(labels, loc="lower left")
-    plt.savefig("./comparison-results/best_score.png")
+        if result == "All":
+            frequency[0] += 1
+            frequency[1] += 1
+            frequency[2] += 1
+        if "Sequential" in result:
+            frequency[0] += 1
+        if "B+-Tree/B-Tree" in result:
+            frequency[1] += 1
+        if "Secondary/Clustering" in result:
+            frequency[2] += 1
+    #     if result not in labels:
+    #         labels.append(result)
+    #         frequency.append(0)
+    #     frequency[labels.index(result)] += 1
+    # for i, label in enumerate(labels):
+    #     percent = (frequency[i] / sum(frequency)) * 100
+    #     rounded_percent = round(percent, 2)
+    #     labels[i] = f"{label} ({rounded_percent}%)"
+    print(labels)
+    print(frequency)
+    plt.bar(labels, frequency)
+    plt.show()
+    # plt.savefig("./comparison-results/best_score.png")
+
+all_data_analysis()
