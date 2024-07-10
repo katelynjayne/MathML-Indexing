@@ -18,7 +18,7 @@ def make_tree(filename: str):
         try:
             root = ElementTree.fromstring(text)
         except:
-            print(f"MALFORMED MATHML: {filename}")
+            # print(f"MALFORMED MATHML: {filename}")
             return None
     return root
 
