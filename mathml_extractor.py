@@ -11,7 +11,7 @@ def make_tree(filename: str):
         tree = ElementTree.parse(filename)
         root = tree.getroot()
     except: #The '&' character causes the xml to be malformed. This except block handles replacing '&' with its escape.
-        with open(filename, 'r') as malformed:
+        with open(filename, 'r', encoding="utf8") as malformed:
             text = malformed.read()
             if '&' in text:
                 text = text.replace('&', '&amp;')
@@ -30,11 +30,11 @@ def operator_extractor(filename: str):
     ns = "{http://www.w3.org/1998/Math/MathML}" # MathML namespace
     root = make_tree(filename)
     keywords = []
-    if not root:
+    if root is None:
         return keywords
     
     for node in root.findall(f'.//'): # This findall() will return every node under the root node in depth-first order.
-        if node.tag == ns + 'mo' and node.text: # Operator tag
+        if node.tag == 'mo' and node.text: # Operator tag
             op = node.text.strip()
 
             if op.isalpha():
@@ -49,7 +49,7 @@ def operator_extractor(filename: str):
                     else:
                         keywords.append(op)
                 
-        elif node.tag == ns + 'msqrt':
+        elif node.tag == 'msqrt':
             keywords.append('221A') # Encoding for square root character, since the literal character does not usually appear in MathML.
         
     return keywords
@@ -83,10 +83,5 @@ def get_dominant_operator(filename: str):
     return None
 
 if __name__ == "__main__":
-    all_the_folders = os.listdir('./../../Downloads/dataset_full/dataset_full/math/') #may need to change path depending on where the dataset is stored on your machine
-    for folder in all_the_folders:
-        if ".DS_Store" not in folder:
-            path = f'./../../Downloads/dataset_full/dataset_full/math/{folder}/question/' #change question to answers to go through answer files
-            for file in os.listdir(path):
-                indexes = operator_extractor(path + file)
+    print(operator_extractor("./../../Downloads/NTCIR-12_Data/MathArticles/wpmath0000006/Unusual_number/2.xml"))
                 
