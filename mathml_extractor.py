@@ -22,19 +22,18 @@ def make_tree(filename: str):
             return None
     return root
 
-def operator_extractor(filename: str):
+def operator_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}"):
     '''
     Given the name of a MathML file, operator_extractor() returns a list of the encodings of all the operators in that formula.
     If the file cannot be parsed, returns an empty list.
     '''
-    ns = "{http://www.w3.org/1998/Math/MathML}" # MathML namespace
     root = make_tree(filename)
     keywords = []
     if root is None:
         return keywords
     
     for node in root.findall(f'.//'): # This findall() will return every node under the root node in depth-first order.
-        if node.tag == 'mo' and node.text: # Operator tag
+        if node.tag == ns + 'mo' and node.text: # Operator tag
             op = node.text.strip()
 
             if op.isalpha():
@@ -49,17 +48,16 @@ def operator_extractor(filename: str):
                     else:
                         keywords.append(op)
                 
-        elif node.tag == 'msqrt':
+        elif node.tag == ns + 'msqrt':
             keywords.append('221A') # Encoding for square root character, since the literal character does not usually appear in MathML.
         
     return keywords
 
-def operand_extractor(filename: str):
+def operand_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}"):
     '''
     Given the name of a MathML file, operand_extractor() returns the number of identifiers and numbers in the formula.
     If the file cannot be parsed, returns 0.
     '''
-    ns = "{http://www.w3.org/1998/Math/MathML}" # MathML namespace
     root = make_tree(filename)
     if not root:
         return 0
@@ -68,13 +66,13 @@ def operand_extractor(filename: str):
     identifiers = root.findall(f".//{ns}mi")
     return len(numbers) + len(identifiers)
 
-def get_dominant_operator(filename: str):
+def get_dominant_operator(filename: str, ns="{http://www.w3.org/1998/Math/MathML}"):
     '''
     Given a MathML file, generates the dominant operator for index in clustering and secondary approach.
     Returns the most frequent operator or, if multiple operators with the highest frequency, returns first in the file.
     If no operators in the formula, returns None.
     '''
-    operators = operator_extractor(filename)
+    operators = operator_extractor(filename, ns)
     if operators:
         counts = Counter(operators)
         max_count = max(counts.values())

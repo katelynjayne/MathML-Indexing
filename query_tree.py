@@ -60,8 +60,8 @@ def query_bplus_tree(filename: str) -> list[str]:
     They are ranked first by number of operators in common, then by difference between number of operands.
     If the MathML cannot be parsed, returns an empty list.
     '''
-    symbols = set(operator_extractor(filename))
-    num_operands = operand_extractor(filename)
+    symbols = set(operator_extractor(filename, ""))
+    num_operands = operand_extractor(filename, "")
 
     with open('./pickled_tree.txt', 'rb') as file:
         bplustree = pickle.load(file)
@@ -83,8 +83,8 @@ def query_bplus_tree(filename: str) -> list[str]:
     return get_top_matches(counts)
 
 def query_b_tree(filename):
-    symbols = set(operator_extractor(filename))
-    num_operands = operand_extractor(filename)
+    symbols = set(operator_extractor(filename, ""))
+    num_operands = operand_extractor(filename, "")
 
     with open('./pickled_b_tree.txt', 'rb') as file:
         btree = pickle.load(file)
