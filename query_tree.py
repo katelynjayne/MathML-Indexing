@@ -49,10 +49,12 @@ def get_avg_score(file_score_dict, ranked_files):
     This method takes in the dictionary of scores and the list of top files.
     Returns the average score of the files that were returned by get_top_matches().
     '''
-    ranked_files_with_score = sorted(file_score_dict.items(), key=lambda item: item[1], reverse=True)
-    num_matches = len(ranked_files)
-    scores = [score for file, score in ranked_files_with_score[:num_matches]]
-    return mean(scores)
+    if file_score_dict:
+        ranked_files_with_score = sorted(file_score_dict.items(), key=lambda item: item[1], reverse=True)
+        num_matches = len(ranked_files)
+        scores = [score for file, score in ranked_files_with_score[:num_matches]]
+        return mean(scores)
+    return 0
 
 def query_bplus_tree(filename: str) -> list[str]:
     '''
