@@ -50,6 +50,11 @@ def operator_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}")
                 
         elif node.tag == ns + 'msqrt':
             keywords.append('221A') # Encoding for square root character, since the literal character does not usually appear in MathML.
+
+    # it's a little sketchy, but in this block we assume the hyphen-minus (-) to be equivalent to the minus sign (−), and swith the encoding to such.
+    for i, op in enumerate(keywords):
+        if op == '002D':
+            keywords[i] = '2212'
         
     return keywords
 
@@ -81,5 +86,5 @@ def get_dominant_operator(filename: str, ns="{http://www.w3.org/1998/Math/MathML
     return None
 
 if __name__ == "__main__":
-    print(operator_extractor("./../../Downloads/NTCIR-12_Data/MathArticles/wpmath0000006/Unusual_number/2.xml"))
+    print(operator_extractor("./../../Downloads/NTCIR-12_Data/MathArticles/wpmath0000006/Unit_root/29.xml", ''))
                 

@@ -32,8 +32,10 @@ def get_max_score(file_score_dict):
     '''
     This method takes in the dictionary of scores as an argument, and returns the maximum score.
     '''
-    scores = file_score_dict.values()
-    return max(scores)
+    if file_score_dict:
+        scores = file_score_dict.values()
+        return max(scores)
+    return 0
 
 def get_min_score(file_score_dict, ranked_files):
     '''

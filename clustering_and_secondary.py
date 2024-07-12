@@ -19,12 +19,11 @@ def get_entire_dataset():
                 entire_dataset.append(whole_path)
     return entire_dataset
 
-def secondary_indexing():
+def secondary_indexing(entire_dataset=get_entire_dataset()):
     '''
     This function parses the entire dataset and returns a secondary index dictionary.
     Make sure you've adjusted the dataset_path variable for your machine.
     '''
-    entire_dataset = get_entire_dataset()
     indexes = {}
     for file in entire_dataset:
         index = get_dominant_operator(file)
@@ -35,13 +34,12 @@ def secondary_indexing():
             indexes[index].append(file)
     return indexes
 
-def clustering(new_dataset_location):
+def clustering(new_dataset_location, operator_dict=secondary_indexing()):
     '''
     This function will organize the dataset so files with the same dominant operator are stored together.
     Takes in as an argument the location where this newly organized dataset should be stored.
     Returns a dictionary: keys are operators, values are the location of the folder of files with that dominant operator.
     '''
-    operator_dict = secondary_indexing()
     locations = {}
 
     if new_dataset_location[-1] != '/':
@@ -59,12 +57,11 @@ def clustering(new_dataset_location):
 
     return locations
 
-def get_clustering_dict(clustered_dataset_location):
+def get_clustering_dict(clustered_dataset_location, operator_dict=secondary_indexing()):
     '''
     Relatively faster way to get the clustering index dictionary if the dataset has already been organized on your machine with clustering().
     Takes in the path to the clustered dataset, returns the dictionary.
     '''
-    operator_dict = secondary_indexing()
     locations = {}
     for operator in operator_dict.keys():
         locations[operator] = f"{clustered_dataset_location}{operator}"

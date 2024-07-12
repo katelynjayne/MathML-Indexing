@@ -72,12 +72,12 @@ def b_tree_approach(filename):
 def clustering_approach(filename, index_dict):
     start_time = time()
     dom_op = get_dominant_operator(filename, "")
-    folder = index_dict[dom_op]
     best_data = []
     try:
+        folder = index_dict[dom_op]
         for file in os.listdir(folder):
             best_data.append(f"{folder}/{file}")
-    except FileNotFoundError:
+    except KeyError or FileNotFoundError:
         pass
     fast_tree = tm.FastTreeMatch()
     scores = fast_tree.run(filename, best_data)
@@ -98,11 +98,13 @@ if __name__ == "__main__":
     useable_files = [file.strip() for file in useable_files]
     random.shuffle(useable_files)
 
-    sec_dict = secondary_indexing()
-    clus_dict = get_clustering_dict("./../clustering_dataset/")
     entire_dataset = get_entire_dataset()
+    sec_dict = secondary_indexing(entire_dataset)
+    clus_dict = get_clustering_dict("./../clustering_dataset/", sec_dict)
 
-    with open("./comparison-results/all_approaches_NTCIR-12.csv", 'w', encoding="utf-8") as csv:
+    counter = 0
+
+    with open("./comparison-results/all_approaches_NTCIR-12_2.csv", 'w', encoding="utf-8") as csv:
         csv.write("File,Number of Operators,B+ Execution Time,Sequential Execution Time,Secondary Execution Time,B-Tree Execution Time,Clustering Execution Time,B+ Average Score,Sequential Average Score,Secondary Average Score,B-Tree Average Score,Clustering Average Score,B+ Max Score,Sequential Max Score,Secondary Max Score,B-Tree Max Score,Clustering Max Score\n")
         with open("./error_log.txt", 'w') as log:
             for short_filename in useable_files:
@@ -116,9 +118,11 @@ if __name__ == "__main__":
                     c_result, c_time, c_avg, c_max = clustering_approach(file, clus_dict)
 
                     csv.write(f"{short_filename},{num_operators},{bplus_time},{seq_time},{sec_time},{b_time},{c_time},{bplus_avg},{seq_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{seq_max},{sec_max},{b_max},{c_max}\n")
-                    print(f"DONE: {short_filename},{num_operators},{bplus_time},{seq_time},{sec_time},{b_time},{c_time},{bplus_avg},{seq_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{seq_max},{sec_max},{b_max},{c_max}")
+                    counter += 1
+                    print(f"DONE: {counter},{short_filename},{num_operators},{bplus_time},{seq_time},{sec_time},{b_time},{c_time},{bplus_avg},{seq_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{seq_max},{sec_max},{b_max},{c_max}")
                 except Exception as e:
                     log.write(f"{short_filename}: {e}\n")
                     print(f"ERROR: {short_filename}: {e}")
+                    counter += 1
 
         
