@@ -232,31 +232,16 @@ def avg_df(data):
     return f"Average {data.name}: {mean(list(data))}"
 
 def wiki_data_analysis():
-    df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12_1.csv")
+    df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12.csv")
     bplus_time = df["B+ Execution Time"]
     print(avg_df(bplus_time))
     seq_time = df["Sequential Execution Time"]
     print(avg_df(seq_time))
     sec_time = df["Secondary Execution Time"]
-    print(avg_df(sec_time))
     b_time = df["B-Tree Execution Time"]
     print(avg_df(b_time))
     clus_time = df["Clustering Execution Time"]
-    print(avg_df(clus_time))
 
-
-    labels = ["B+-Tree","Sequential","Secondary","B-Tree","Clustering"]
-    frequency = [0,0,0,0,0]
-    for times in zip(list(bplus_time), list(seq_time), list(sec_time), list(b_time), list(clus_time)):
-        fastest = min(times)
-        idx = times.index(fastest)
-        frequency[idx] += 1
-    
-    plt.pie(frequency, labels=labels, autopct='%1.2f%%')
-    plt.show()
-
-
-    
     bplus_avg = df["B+ Average Score"]
     print(avg_df(bplus_avg))
     seq_avg = df["Sequential Average Score"]
@@ -267,7 +252,7 @@ def wiki_data_analysis():
     print(avg_df(b_avg))
     clus_avg = df["Clustering Average Score"]
     print(avg_df(clus_avg))
-    
+
     bplus_max = df["B+ Max Score"]
     print(avg_df(bplus_max))
     seq_max = df["Sequential Max Score"]
@@ -278,5 +263,33 @@ def wiki_data_analysis():
     print(avg_df(b_max))
     clus_max = df["Clustering Max Score"]
     print(avg_df(clus_max))
+
+    sec_times_cleaned = list(sec_time)
+    for time, score in zip(sec_time,sec_max):
+        if time == 0 and score == 0:
+            sec_times_cleaned.remove(0)
+
+    print(f"SEC: {mean(sec_times_cleaned)}")
+        
+    clus_times_cleaned = list(clus_time)
+    for time, score in zip(clus_time,clus_max):
+        if time == 0 and score == 0:
+            clus_times_cleaned.remove(0)
+
+    print(f"CLUS: {mean(clus_times_cleaned)}")
+
+    labels = ["Secondary","B+-Tree","B-Tree","Clustering"]
+    frequency = [0,0,0,0]
+    for times in zip( list(sec_time), list(bplus_time), list(b_time), list(clus_time)):
+        fastest = min(times)
+        if fastest == 0:
+            continue
+        idx = times.index(fastest)
+        frequency[idx] += 1
+    
+    _, _, autotexts = plt.pie(frequency, labels=labels, autopct='%1.2f%%', colors=["black","dimgray","darkgray","lightgray"])
+    for autotext in autotexts[:2]:
+        autotext.set_color('white')
+    plt.savefig("./comparison-results_fastest-pie-NTCIR.png")
 
 wiki_data_analysis()
