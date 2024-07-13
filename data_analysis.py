@@ -228,32 +228,55 @@ def all_data_analysis():
     plt.savefig("./comparison-results/fastest.png")
     plt.clf()
 
-    labels = ["Sequential", "B+-Tree/B-Tree", "Clustering/Secondary"]
-    frequency = [0,0,0]
-    best_scoring = df["Best Scoring Approach"]
-    for result in best_scoring:
-        if result == "All":
-            frequency[0] += 1
-            frequency[1] += 1
-            frequency[2] += 1
-        if "Sequential" in result:
-            frequency[0] += 1
-        if "B+-Tree/B-Tree" in result:
-            frequency[1] += 1
-        if "Secondary/Clustering" in result:
-            frequency[2] += 1
-    #     if result not in labels:
-    #         labels.append(result)
-    #         frequency.append(0)
-    #     frequency[labels.index(result)] += 1
-    # for i, label in enumerate(labels):
-    #     percent = (frequency[i] / sum(frequency)) * 100
-    #     rounded_percent = round(percent, 2)
-    #     labels[i] = f"{label} ({rounded_percent}%)"
-    print(labels)
-    print(frequency)
-    plt.bar(labels, frequency)
-    plt.show()
-    # plt.savefig("./comparison-results/best_score.png")
+def avg_df(data):
+    return f"Average {data.name}: {mean(list(data))}"
 
-all_data_analysis()
+def wiki_data_analysis():
+    df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12_1.csv")
+    bplus_time = df["B+ Execution Time"]
+    print(avg_df(bplus_time))
+    seq_time = df["Sequential Execution Time"]
+    print(avg_df(seq_time))
+    sec_time = df["Secondary Execution Time"]
+    print(avg_df(sec_time))
+    b_time = df["B-Tree Execution Time"]
+    print(avg_df(b_time))
+    clus_time = df["Clustering Execution Time"]
+    print(avg_df(clus_time))
+
+
+    labels = ["B+-Tree","Sequential","Secondary","B-Tree","Clustering"]
+    frequency = [0,0,0,0,0]
+    for times in zip(list(bplus_time), list(seq_time), list(sec_time), list(b_time), list(clus_time)):
+        fastest = min(times)
+        idx = times.index(fastest)
+        frequency[idx] += 1
+    
+    plt.pie(frequency, labels=labels, autopct='%1.2f%%')
+    plt.show()
+
+
+    
+    bplus_avg = df["B+ Average Score"]
+    print(avg_df(bplus_avg))
+    seq_avg = df["Sequential Average Score"]
+    print(avg_df(seq_avg))
+    sec_avg = df["Secondary Average Score"]
+    print(avg_df(sec_avg))
+    b_avg = df["B-Tree Average Score"]
+    print(avg_df(b_avg))
+    clus_avg = df["Clustering Average Score"]
+    print(avg_df(clus_avg))
+    
+    bplus_max = df["B+ Max Score"]
+    print(avg_df(bplus_max))
+    seq_max = df["Sequential Max Score"]
+    print(avg_df(seq_max))
+    sec_max = df["Secondary Max Score"]
+    print(avg_df(sec_max))
+    b_max = df["B-Tree Max Score"]
+    print(avg_df(b_max))
+    clus_max = df["Clustering Max Score"]
+    print(avg_df(clus_max))
+
+wiki_data_analysis()
