@@ -290,6 +290,7 @@ def wiki_data_analysis():
     _, _, autotexts = plt.pie(frequency, labels=labels, autopct='%1.2f%%', colors=["black","dimgray","darkgray","lightgray"])
     for autotext in autotexts[:2]:
         autotext.set_color('white')
-    plt.savefig("./comparison-results_fastest-pie-NTCIR.png")
+    # plt.savefig("./comparison-results/fastest-pie-NTCIR.png")
+    plt.show()
 
 wiki_data_analysis()

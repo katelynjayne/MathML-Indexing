@@ -3,11 +3,13 @@ import os
 import shutil
 
 dataset_path = "./../../Downloads/dataset_full/dataset_full/math/"
+ntcir_path = "./../../Downloads/NTCIR-12_Data/MathArticles/"
 
 def get_entire_dataset():
-    all_the_folders = os.listdir(dataset_path)
+    print("getting dataset")
+    mse_folders = os.listdir(dataset_path)
     entire_dataset = []
-    for folder in all_the_folders:
+    for folder in mse_folders:
         if ".DS_Store" not in folder:
             question_path = f"{dataset_path}{folder}/question/"
             answer_path = f"{dataset_path}{folder}/answers/"
@@ -17,6 +19,16 @@ def get_entire_dataset():
             for file in os.listdir(answer_path):
                 whole_path = answer_path + file
                 entire_dataset.append(whole_path)
+    
+    ntcir_folders = os.listdir(ntcir_path)
+    for folder in ntcir_folders:
+        articles = os.listdir(f"{ntcir_path}{folder}")
+        for article in articles:
+            path_to_article = f"{ntcir_path}{folder}/{article}/"
+            for file in os.listdir(path_to_article):
+                whole_path = path_to_article + file
+                entire_dataset.append(whole_path)
+    
     return entire_dataset
 
 def secondary_indexing(entire_dataset=get_entire_dataset()):
@@ -25,8 +37,12 @@ def secondary_indexing(entire_dataset=get_entire_dataset()):
     Make sure you've adjusted the dataset_path variable for your machine.
     '''
     indexes = {}
+    print("getting op dict")
     for file in entire_dataset:
-        index = get_dominant_operator(file)
+        ns = "{http://www.w3.org/1998/Math/MathML}"
+        if "NTCIR-12" in file:
+            ns = ""
+        index = get_dominant_operator(file, ns)
         if index:
             if index not in indexes:
                 indexes[index] = []
@@ -41,12 +57,14 @@ def clustering(new_dataset_location, operator_dict=secondary_indexing()):
     Returns a dictionary: keys are operators, values are the location of the folder of files with that dominant operator.
     '''
     locations = {}
-
+    print("in clustering")
     if new_dataset_location[-1] != '/':
         new_dataset_location = f"{new_dataset_location}/"
 
     for operator in operator_dict.keys():
         new_folder_path = f"{new_dataset_location}{operator}"
+        new_folder_path = new_folder_path.replace(':', "colon")
+        new_folder_path = new_folder_path.replace('|', "pipe")
         if not os.path.exists(new_folder_path):
             os.makedirs(new_folder_path)
 
@@ -57,7 +75,7 @@ def clustering(new_dataset_location, operator_dict=secondary_indexing()):
 
     return locations
 
-def get_clustering_dict(clustered_dataset_location, operator_dict=secondary_indexing()):
+def get_clustering_dict(clustered_dataset_location, operator_dict={}):
     '''
     Relatively faster way to get the clustering index dictionary if the dataset has already been organized on your machine with clustering().
     Takes in the path to the clustered dataset, returns the dictionary.
@@ -69,4 +87,4 @@ def get_clustering_dict(clustered_dataset_location, operator_dict=secondary_inde
 
 
 if __name__ == "__main__":
-    print(clustering("./../clustering_dataset/"))
+    print(clustering("./../clustering_dataset_new/"))

@@ -13,8 +13,11 @@ def make_tree(filename: str):
     except: #The '&' character causes the xml to be malformed. This except block handles replacing '&' with its escape.
         with open(filename, 'r', encoding="utf8") as malformed:
             text = malformed.read()
-            if '&' in text:
-                text = text.replace('&', '&amp;')
+            text = text.replace('&', '&amp;')
+            text = text.replace('"', '&quot;')
+            text = text.replace("'", '&apos;')
+            text = text.replace('><<', '>&lt;<')
+            text = text.replace('>><', '>&gt;<')
         try:
             root = ElementTree.fromstring(text)
         except:

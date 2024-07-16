@@ -67,7 +67,7 @@ def query_bplus_tree(filename: str) -> list[str]:
     symbols = set(operator_extractor(filename, ""))
     num_operands = operand_extractor(filename, "")
 
-    with open('./pickled_tree.txt', 'rb') as file:
+    with open('./pickled_bplus_tree.txt', 'rb') as file:
         bplustree = pickle.load(file)
 
     counts = {}

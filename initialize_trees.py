@@ -5,6 +5,7 @@ import pickle
 from B_Tree import BTree
 
 dataset_path = "./../../Downloads/dataset_full/dataset_full/math/"
+ntcir_path = "./../../Downloads/NTCIR-12_Data/MathArticles/"
 
 def bplustree_builder():
     '''
@@ -66,10 +67,54 @@ def btree_builder():
         pickle.dump(btree, file)
     # btree.printTree(btree.root)
 
+def bplus_tree_add():
+    with open("./pickled_bplus_tree.txt", "rb") as file:
+        bplustree = pickle.load(file)
+
+    folders = os.listdir(ntcir_path)
+    for folder in folders:
+        articles = os.listdir(f"{ntcir_path}{folder}")
+        for article in articles:
+            path_to_article = f"{ntcir_path}{folder}/{article}/"
+            for file in os.listdir(path_to_article):
+                whole_path = path_to_article + file
+                num_operands = operand_extractor(whole_path, "")
+                indexes = operator_extractor(whole_path, "")
+                for index in indexes:
+                    bplustree.insert(index, (whole_path, num_operands))
+
+    with open('./new_pickled_bplus_tree.txt', 'wb') as file:
+        pickle.dump(bplustree, file)
+    
+
+def b_tree_add():
+    with open("./pickled_b_tree.txt", "rb") as file:
+        btree = pickle.load(file)
+
+    folders = os.listdir(ntcir_path)
+    for folder in folders:
+        articles = os.listdir(f"{ntcir_path}{folder}")
+        for article in articles:
+            path_to_article = f"{ntcir_path}{folder}/{article}/"
+            for file in os.listdir(path_to_article):
+                whole_path = path_to_article + file
+                num_operands = operand_extractor(whole_path, "")
+                indexes = operator_extractor(whole_path, "")
+                for index in indexes:
+                    btree.insert(index, (whole_path, num_operands))
+
+    with open('./new_pickled_b_tree.txt', 'wb') as file:
+        pickle.dump(btree, file)
+
 if __name__ == "__main__":
-    print("Building B+ tree...")
-    bplustree_builder()
+    print("Editing B+ tree...")
+    bplus_tree_add()
     print("B+ tree finished!")
-    print("Building B tree...")
-    btree_builder()
+    print("Editing B tree...")
+    b_tree_add()
     print("B tree finished!")
+
+    with open("./new_pickled_bplus_tree.txt", 'rb') as file:
+        bplustree = pickle.load(file)
+
+    bplustree.show_bfs()
