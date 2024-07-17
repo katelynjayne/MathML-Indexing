@@ -31,7 +31,7 @@ def get_entire_dataset():
     
     return entire_dataset
 
-def secondary_indexing(entire_dataset=get_entire_dataset()):
+def secondary_indexing(entire_dataset=[]):
     '''
     This function parses the entire dataset and returns a secondary index dictionary.
     Make sure you've adjusted the dataset_path variable for your machine.
@@ -50,7 +50,7 @@ def secondary_indexing(entire_dataset=get_entire_dataset()):
             indexes[index].append(file)
     return indexes
 
-def clustering(new_dataset_location, operator_dict=secondary_indexing()):
+def clustering(new_dataset_location, operator_dict={}):
     '''
     This function will organize the dataset so files with the same dominant operator are stored together.
     Takes in as an argument the location where this newly organized dataset should be stored.
@@ -58,13 +58,15 @@ def clustering(new_dataset_location, operator_dict=secondary_indexing()):
     '''
     locations = {}
     print("in clustering")
-    if new_dataset_location[-1] != '/':
-        new_dataset_location = f"{new_dataset_location}/"
+
+    reserved_names = ['con', 'prn', 'aux', 'nul', 'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9']
 
     for operator in operator_dict.keys():
-        new_folder_path = f"{new_dataset_location}{operator}"
-        new_folder_path = new_folder_path.replace(':', "colon")
-        new_folder_path = new_folder_path.replace('|', "pipe")
+        if operator in reserved_names:
+            new_operator = f"{operator}_reserved"
+        else:
+            new_operator = operator
+        new_folder_path = os.path.join(new_dataset_location, new_operator)
         if not os.path.exists(new_folder_path):
             os.makedirs(new_folder_path)
 

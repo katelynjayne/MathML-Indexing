@@ -5,6 +5,7 @@ from mathml_extractor import operator_extractor, get_dominant_operator
 from clustering_and_secondary import secondary_indexing, get_clustering_dict, get_entire_dataset
 import random
 import os
+import pandas
 
 def bplus_approach(filename):
     start_time = time()
@@ -92,22 +93,25 @@ def clustering_approach(filename, index_dict):
     return top_ten, execution_time, avg_score, max_score
 
 if __name__ == "__main__":
-    useable_files = []
-    with open("./useable_files.txt", 'r', encoding="utf-8") as useable_files_file:
-        useable_files = useable_files_file.readlines()
-    useable_files = [file.strip() for file in useable_files]
-    random.shuffle(useable_files)
+    # useable_files = []
+    # with open("./useable_files.txt", 'r', encoding="utf-8") as useable_files_file:
+    #     useable_files = useable_files_file.readlines()
+    # useable_files = [file.strip() for file in useable_files]
+    # random.shuffle(useable_files)
+
+    df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12.csv")
+    used_files = list(df["File"])
 
     entire_dataset = get_entire_dataset()
     sec_dict = secondary_indexing(entire_dataset)
-    clus_dict = get_clustering_dict("./../clustering_dataset/", sec_dict)
+    clus_dict = get_clustering_dict("./../clustering_dataset_new/", sec_dict)
 
     counter = 0
 
     with open("./comparison-results/all_approaches_NTCIR-12_2.csv", 'w', encoding="utf-8") as csv:
         csv.write("File,Number of Operators,B+ Execution Time,Sequential Execution Time,Secondary Execution Time,B-Tree Execution Time,Clustering Execution Time,B+ Average Score,Sequential Average Score,Secondary Average Score,B-Tree Average Score,Clustering Average Score,B+ Max Score,Sequential Max Score,Secondary Max Score,B-Tree Max Score,Clustering Max Score\n")
         with open("./error_log.txt", 'w') as log:
-            for short_filename in useable_files:
+            for short_filename in used_files:
                 try:
                     file = f"./../../Downloads/NTCIR-12_Data/{short_filename}"
                     num_operators = len(operator_extractor(file, ""))
@@ -119,7 +123,7 @@ if __name__ == "__main__":
 
                     csv.write(f"{short_filename},{num_operators},{bplus_time},{seq_time},{sec_time},{b_time},{c_time},{bplus_avg},{seq_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{seq_max},{sec_max},{b_max},{c_max}\n")
                     counter += 1
-                    print(f"DONE: {counter},{short_filename},{num_operators},{bplus_time},{seq_time},{sec_time},{b_time},{c_time},{bplus_avg},{seq_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{seq_max},{sec_max},{b_max},{c_max}")
+                    print(f"DONE: {counter}, {short_filename}")
                 except Exception as e:
                     log.write(f"{short_filename}: {e}\n")
                     print(f"ERROR: {short_filename}: {e}")

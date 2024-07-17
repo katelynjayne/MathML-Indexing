@@ -1,6 +1,7 @@
 from xml.etree import ElementTree
-import os
+import re
 from collections import Counter
+import os
 
 def make_tree(filename: str):
     '''
@@ -39,7 +40,7 @@ def operator_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}")
         if node.tag == ns + 'mo' and node.text: # Operator tag
             op = node.text.strip()
 
-            if op.isalpha():
+            if bool(re.match(r"^[A-Za-z ]+$", op)):
                 keywords.append(op)
             else:
                 try:
@@ -49,7 +50,13 @@ def operator_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}")
                         index = op[4:-1]
                         keywords.append(index)
                     else:
-                        keywords.append(op)
+                        encoding = ""
+                        for char in op:
+                            if bool(re.match(r"[A-Za-z0-9]", char)):
+                                encoding += char
+                            else:
+                                encoding += format(ord(char), '04X') + "_"
+                        keywords.append(encoding)
                 
         elif node.tag == ns + 'msqrt':
             keywords.append('221A') # Encoding for square root character, since the literal character does not usually appear in MathML.
@@ -89,5 +96,19 @@ def get_dominant_operator(filename: str, ns="{http://www.w3.org/1998/Math/MathML
     return None
 
 if __name__ == "__main__":
-    print(operator_extractor("./../../Downloads/NTCIR-12_Data/MathArticles/wpmath0000006/Unit_root/29.xml", ''))
+    ops = set()
+    ntcir_path = "./../../Downloads/NTCIR-12_Data/MathArticles/"
+    folders = os.listdir(ntcir_path)
+    for folder in folders:
+        articles = os.listdir(f"{ntcir_path}{folder}")
+        for article in articles:
+            path_to_article = f"{ntcir_path}{folder}/{article}/"
+            for file in os.listdir(path_to_article):
+                whole_path = path_to_article + file
+                indexes = operator_extractor(whole_path, "")
+                for idx in indexes:
+                    ops.add(idx)
+    
+    print(ops)
+    
                 
