@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     counter = 0
 
-    with open("./comparison-results/all_approaches_NTCIR-12_2.csv", 'w', encoding="utf-8") as csv:
+    with open("./comparison-results/all_approaches_updated_NTCIR-12.csv", 'w', encoding="utf-8") as csv:
         csv.write("File,Number of Operators,B+ Execution Time,Sequential Execution Time,Secondary Execution Time,B-Tree Execution Time,Clustering Execution Time,B+ Average Score,Sequential Average Score,Secondary Average Score,B-Tree Average Score,Clustering Average Score,B+ Max Score,Sequential Max Score,Secondary Max Score,B-Tree Max Score,Clustering Max Score\n")
         with open("./error_log.txt", 'w') as log:
             for short_filename in used_files:

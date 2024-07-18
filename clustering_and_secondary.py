@@ -6,7 +6,7 @@ dataset_path = "./../../Downloads/dataset_full/dataset_full/math/"
 ntcir_path = "./../../Downloads/NTCIR-12_Data/MathArticles/"
 
 def get_entire_dataset():
-    print("getting dataset")
+    
     mse_folders = os.listdir(dataset_path)
     entire_dataset = []
     for folder in mse_folders:
@@ -36,8 +36,11 @@ def secondary_indexing(entire_dataset=[]):
     This function parses the entire dataset and returns a secondary index dictionary.
     Make sure you've adjusted the dataset_path variable for your machine.
     '''
+    if not entire_dataset:
+        entire_dataset = get_entire_dataset()
+
     indexes = {}
-    print("getting op dict")
+    
     for file in entire_dataset:
         ns = "{http://www.w3.org/1998/Math/MathML}"
         if "NTCIR-12" in file:
@@ -50,16 +53,18 @@ def secondary_indexing(entire_dataset=[]):
             indexes[index].append(file)
     return indexes
 
+reserved_names = ['con', 'prn', 'aux', 'nul', 'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9']
+
 def clustering(new_dataset_location, operator_dict={}):
     '''
     This function will organize the dataset so files with the same dominant operator are stored together.
     Takes in as an argument the location where this newly organized dataset should be stored.
     Returns a dictionary: keys are operators, values are the location of the folder of files with that dominant operator.
     '''
-    locations = {}
-    print("in clustering")
+    if not operator_dict:
+        operator_dict = secondary_indexing()
 
-    reserved_names = ['con', 'prn', 'aux', 'nul', 'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9']
+    locations = {}
 
     for operator in operator_dict.keys():
         if operator in reserved_names:
@@ -82,8 +87,13 @@ def get_clustering_dict(clustered_dataset_location, operator_dict={}):
     Relatively faster way to get the clustering index dictionary if the dataset has already been organized on your machine with clustering().
     Takes in the path to the clustered dataset, returns the dictionary.
     '''
+    if not operator_dict:
+        operator_dict = secondary_indexing()
+        
     locations = {}
     for operator in operator_dict.keys():
+        if operator in reserved_names:
+            operator = f"{operator}_reserved"
         locations[operator] = f"{clustered_dataset_location}{operator}"
     return locations
 
