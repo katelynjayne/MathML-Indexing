@@ -34,7 +34,7 @@ def bplustree_builder():
                     bplustree.insert(index, (whole_path, num_operands))
 
     with open('./pickled_bplus_tree.txt', 'wb') as file:
-        pickle.dump(bplustree, file)
+        pickle.dump(bplustree,file)
     # bplustree.show_all_data()
 
 def btree_builder():
@@ -100,21 +100,23 @@ def b_tree_add():
                 whole_path = path_to_article + file
                 num_operands = operand_extractor(whole_path, "")
                 indexes = operator_extractor(whole_path, "")
-                for index in indexes:
+                for index in set(indexes):
                     btree.insert(index, (whole_path, num_operands))
 
-    with open('./new_pickled_b_tree.txt', 'wb') as file:
+    with open('./new_pickled_b_tree_2.txt', 'wb') as file:
         pickle.dump(btree, file)
 
 if __name__ == "__main__":
-    print("Editing B+ tree...")
-    bplus_tree_add()
-    print("B+ tree finished!")
+    # print("Editing B+ tree...")
+    # bplus_tree_add()
+    # print("B+ tree finished!")
     print("Editing B tree...")
     b_tree_add()
     print("B tree finished!")
 
-    with open("./new_pickled_bplus_tree.txt", 'rb') as file:
-        bplustree = pickle.load(file)
+    with open("./new_pickled_b_tree.txt", 'rb') as file:
+        btree = pickle.load(file)
 
-    bplustree.show_bfs()
+    # btree.printTree(btree.root)
+    node, idx = btree.search("succ")
+    print(len(node.values[idx])) # should be 21!

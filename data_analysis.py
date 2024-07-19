@@ -232,7 +232,7 @@ def avg_df(data):
     return f"Average {data.name}: {mean(list(data))}"
 
 def wiki_data_analysis():
-    df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12.csv")
+    df = pandas.read_csv("./comparison-results/all_approaches_updated_1_NTCIR-12.csv")
     bplus_time = df["B+ Execution Time"]
     print(avg_df(bplus_time))
     seq_time = df["Sequential Execution Time"]
