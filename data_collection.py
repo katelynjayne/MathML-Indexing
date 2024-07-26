@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # random.shuffle(useable_files)
 
     df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12.csv")
-    used_files = list(df["File"])
+    used_files = list(df["File"])[989:]
 
     entire_dataset = get_entire_dataset()
     sec_dict = secondary_indexing(entire_dataset)
@@ -108,20 +108,20 @@ if __name__ == "__main__":
 
     counter = 0
 
-    with open("./comparison-results/all_approaches_updated_NTCIR-12.csv", 'w', encoding="utf-8") as csv:
-        csv.write("File,Number of Operators,B+ Execution Time,Sequential Execution Time,Secondary Execution Time,B-Tree Execution Time,Clustering Execution Time,B+ Average Score,Sequential Average Score,Secondary Average Score,B-Tree Average Score,Clustering Average Score,B+ Max Score,Sequential Max Score,Secondary Max Score,B-Tree Max Score,Clustering Max Score\n")
-        with open("./error_log.txt", 'w') as log:
+    with open("./comparison-results/no_sequential_NTCIR-12.csv", 'w', encoding="utf-8") as csv:
+        csv.write("File,Number of Operators,B+ Execution Time,Secondary Execution Time,B-Tree Execution Time,Clustering Execution Time,B+ Average Score,Secondary Average Score,B-Tree Average Score,Clustering Average Score,B+ Max Score,Secondary Max Score,B-Tree Max Score,Clustering Max Score\n")
+        with open("./error_log.txt", 'w', encoding="utf-8") as log:
             for short_filename in used_files:
                 try:
                     file = f"./../../Downloads/NTCIR-12_Data/{short_filename}"
                     num_operators = len(operator_extractor(file, ""))
                     bplus_result, bplus_time, bplus_avg, bplus_max = bplus_approach(file)
-                    seq_result, seq_time, seq_avg, seq_max = sequential_approach(file, entire_dataset)
+                    # seq_result, seq_time, seq_avg, seq_max = sequential_approach(file, entire_dataset)
                     sec_result, sec_time, sec_avg, sec_max = secondary_approach(file, sec_dict)
                     b_result, b_time, b_avg, b_max = b_tree_approach(file)
                     c_result, c_time, c_avg, c_max = clustering_approach(file, clus_dict)
 
-                    csv.write(f"{short_filename},{num_operators},{bplus_time},{seq_time},{sec_time},{b_time},{c_time},{bplus_avg},{seq_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{seq_max},{sec_max},{b_max},{c_max}\n")
+                    csv.write(f"{short_filename},{num_operators},{bplus_time},{sec_time},{b_time},{c_time},{bplus_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{sec_max},{b_max},{c_max}\n")
                     counter += 1
                     print(f"DONE: {counter}, {short_filename}")
                 except Exception as e:
