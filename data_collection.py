@@ -93,14 +93,11 @@ def clustering_approach(filename, index_dict):
     return top_ten, execution_time, avg_score, max_score
 
 if __name__ == "__main__":
-    # useable_files = []
-    # with open("./useable_files.txt", 'r', encoding="utf-8") as useable_files_file:
-    #     useable_files = useable_files_file.readlines()
-    # useable_files = [file.strip() for file in useable_files]
-    # random.shuffle(useable_files)
-
-    df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12.csv")
-    used_files = list(df["File"])[989:]
+    useable_files = []
+    with open("./useable_files.txt", 'r', encoding="utf-8") as useable_files_file:
+        useable_files = useable_files_file.readlines()
+    useable_files = [file.strip() for file in useable_files]
+    random.shuffle(useable_files)
 
     entire_dataset = get_entire_dataset()
     sec_dict = secondary_indexing(entire_dataset)
@@ -111,7 +108,7 @@ if __name__ == "__main__":
     with open("./comparison-results/no_sequential_NTCIR-12.csv", 'w', encoding="utf-8") as csv:
         csv.write("File,Number of Operators,B+ Execution Time,Secondary Execution Time,B-Tree Execution Time,Clustering Execution Time,B+ Average Score,Secondary Average Score,B-Tree Average Score,Clustering Average Score,B+ Max Score,Secondary Max Score,B-Tree Max Score,Clustering Max Score\n")
         with open("./error_log.txt", 'w', encoding="utf-8") as log:
-            for short_filename in used_files:
+            for short_filename in useable_files:
                 try:
                     file = f"./../../Downloads/NTCIR-12_Data/{short_filename}"
                     num_operators = len(operator_extractor(file, ""))
@@ -121,6 +118,8 @@ if __name__ == "__main__":
                     b_result, b_time, b_avg, b_max = b_tree_approach(file)
                     c_result, c_time, c_avg, c_max = clustering_approach(file, clus_dict)
 
+                    if ',' in short_filename:
+                        short_filename = f'"{short_filename}"'
                     csv.write(f"{short_filename},{num_operators},{bplus_time},{sec_time},{b_time},{c_time},{bplus_avg},{sec_avg},{b_avg},{c_avg},{bplus_max},{sec_max},{b_max},{c_max}\n")
                     counter += 1
                     print(f"DONE: {counter}, {short_filename}")
