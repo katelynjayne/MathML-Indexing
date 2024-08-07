@@ -232,11 +232,11 @@ def avg_df(data):
     return f"Average {data.name}: {mean(list(data))}"
 
 def wiki_data_analysis():
-    df = pandas.read_csv("./comparison-results/all_approaches_updated_NTCIR-12_1.csv")
+    df = pandas.read_csv("./comparison-results/no_sequential_1_NTCIR-12.csv")
     bplus_time = df["B+ Execution Time"]
     print(avg_df(bplus_time))
-    seq_time = df["Sequential Execution Time"]
-    print(avg_df(seq_time))
+    # seq_time = df["Sequential Execution Time"]
+    # print(avg_df(seq_time))
     sec_time = df["Secondary Execution Time"]
     b_time = df["B-Tree Execution Time"]
     print(avg_df(b_time))
@@ -244,8 +244,8 @@ def wiki_data_analysis():
 
     bplus_avg = df["B+ Average Score"]
     print(avg_df(bplus_avg))
-    seq_avg = df["Sequential Average Score"]
-    print(avg_df(seq_avg))
+    # seq_avg = df["Sequential Average Score"]
+    # print(avg_df(seq_avg))
     sec_avg = df["Secondary Average Score"]
     print(avg_df(sec_avg))
     b_avg = df["B-Tree Average Score"]
@@ -255,8 +255,8 @@ def wiki_data_analysis():
 
     bplus_max = df["B+ Max Score"]
     print(avg_df(bplus_max))
-    seq_max = df["Sequential Max Score"]
-    print(avg_df(seq_max))
+    # seq_max = df["Sequential Max Score"]
+    # print(avg_df(seq_max))
     sec_max = df["Secondary Max Score"]
     print(avg_df(sec_max))
     b_max = df["B-Tree Max Score"]
