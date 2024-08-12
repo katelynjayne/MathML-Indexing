@@ -98,6 +98,7 @@ if __name__ == "__main__":
         useable_files = useable_files_file.readlines()
     useable_files = [file.strip() for file in useable_files]
     random.shuffle(useable_files)
+    useable_files = useable_files[:71]
 
     entire_dataset = get_entire_dataset()
     sec_dict = secondary_indexing(entire_dataset)
