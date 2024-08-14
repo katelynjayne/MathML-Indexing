@@ -231,56 +231,74 @@ def all_data_analysis():
 def avg_df(data):
     return f"Average {data.name}: {mean(list(data))}"
 
+def avg_2df(data1, data2):
+    return f"Average {data1.name}: {(mean(list(data1)) + mean(list(data2))) / 2}"
+
 def wiki_data_analysis():
-    df = pandas.read_csv("./comparison-results/no_sequential_1_NTCIR-12.csv")
-    bplus_time = df["B+ Execution Time"]
-    print(avg_df(bplus_time))
-    # seq_time = df["Sequential Execution Time"]
-    # print(avg_df(seq_time))
-    sec_time = df["Secondary Execution Time"]
-    b_time = df["B-Tree Execution Time"]
-    print(avg_df(b_time))
-    clus_time = df["Clustering Execution Time"]
+    df = pandas.read_csv("./comparison-results/no_sequential_NTCIR-12.csv")
+    df2 = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12.csv")
+    bplus_time = list(df["B+ Execution Time"])
+    bplus_time.extend(list(df2["B+ Execution Time"]))
+    print(f"AVG B+ TIME: {mean(bplus_time)}")
+    seq_time = df2["Sequential Execution Time"]
+    print(avg_df(seq_time))
+    sec_time = list(df["Secondary Execution Time"])
+    sec_time.extend(list(df2["Secondary Execution Time"]))
+    print(f"AVG SEC TIME: {mean(sec_time)}")
+    b_time = list(df["B-Tree Execution Time"])
+    b_time.extend(list(df2["B-Tree Execution Time"]))
+    print(f"AVG B TIME: {mean(b_time)}")
+    clus_time = list(df["Clustering Execution Time"])
+    clus_time.extend(list(df2["Clustering Execution Time"]))
+    print(f"AVG CLUS TIME: {mean(clus_time)}")
 
     bplus_avg = df["B+ Average Score"]
-    print(avg_df(bplus_avg))
-    # seq_avg = df["Sequential Average Score"]
-    # print(avg_df(seq_avg))
+    bplus_avg2 = df2["B+ Average Score"]
+    print(avg_2df(bplus_avg, bplus_avg2))
+    seq_avg = df2["Sequential Average Score"]
+    print(avg_df(seq_avg))
     sec_avg = df["Secondary Average Score"]
-    print(avg_df(sec_avg))
+    sec_avg2 = df2["Secondary Average Score"]
+    print(avg_2df(sec_avg, sec_avg2))
     b_avg = df["B-Tree Average Score"]
-    print(avg_df(b_avg))
+    b_avg2 = df2["B-Tree Average Score"]
+    print(avg_2df(b_avg, b_avg2))
     clus_avg = df["Clustering Average Score"]
-    print(avg_df(clus_avg))
+    clus_avg2 = df2["Clustering Average Score"]
+    print(avg_2df(clus_avg, clus_avg2))
 
     bplus_max = df["B+ Max Score"]
-    print(avg_df(bplus_max))
-    # seq_max = df["Sequential Max Score"]
-    # print(avg_df(seq_max))
+    bplus_max2 = df2["B+ Max Score"]
+    print(avg_2df(bplus_max, bplus_max2))
+    seq_max = df2["Sequential Max Score"]
+    print(avg_df(seq_max))
     sec_max = df["Secondary Max Score"]
-    print(avg_df(sec_max))
+    sec_max2 = df2["Secondary Max Score"]
+    print(avg_2df(sec_max, sec_max2))
     b_max = df["B-Tree Max Score"]
-    print(avg_df(b_max))
+    b_max2 = df2["B-Tree Max Score"]
+    print(avg_2df(b_max, b_max2))
     clus_max = df["Clustering Max Score"]
-    print(avg_df(clus_max))
+    clus_max2 = df2["Clustering Max Score"]
+    print(avg_2df(clus_max, clus_max2))
 
-    sec_times_cleaned = list(sec_time)
-    for time, score in zip(sec_time,sec_max):
-        if time == 0 and score == 0:
-            sec_times_cleaned.remove(0)
+    # sec_times_cleaned = list(sec_time)
+    # for time, score in zip(sec_time,sec_max):
+    #     if time == 0 and score == 0:
+    #         sec_times_cleaned.remove(0)
 
-    print(f"SEC: {mean(sec_times_cleaned)}")
+    # print(f"SEC: {mean(sec_times_cleaned)}")
         
-    clus_times_cleaned = list(clus_time)
-    for time, score in zip(clus_time,clus_max):
-        if time == 0 and score == 0:
-            clus_times_cleaned.remove(0)
+    # clus_times_cleaned = list(clus_time)
+    # for time, score in zip(clus_time,clus_max):
+    #     if time == 0 and score == 0:
+    #         clus_times_cleaned.remove(0)
 
-    print(f"CLUS: {mean(clus_times_cleaned)}")
+    # print(f"CLUS: {mean(clus_times_cleaned)}")
 
     labels = ["Secondary","B+-Tree","B-Tree","Clustering"]
     frequency = [0,0,0,0]
-    for times in zip( list(sec_time), list(bplus_time), list(b_time), list(clus_time)):
+    for times in zip(sec_time, bplus_time, b_time, clus_time):
         fastest = min(times)
         if fastest == 0:
             continue
@@ -290,7 +308,7 @@ def wiki_data_analysis():
     _, _, autotexts = plt.pie(frequency, labels=labels, autopct='%1.2f%%', colors=["black","dimgray","darkgray","lightgray"])
     for autotext in autotexts[:2]:
         autotext.set_color('white')
-    # plt.savefig("./comparison-results/fastest-pie-NTCIR.png")
+    plt.savefig("./comparison-results/fastest-NTCIR.png")
     plt.show()
 
 wiki_data_analysis()
