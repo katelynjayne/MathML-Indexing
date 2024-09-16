@@ -12,19 +12,19 @@ def get_top_matches(file_score_dict):
 
     if len(ranked_files) == 10 and len(ranked_files_with_score) > 10:
         min_score = ranked_files_with_score[9][1]
-        if min_score == ranked_files_with_score[0][1]: # There are more than 10 files with the top score, add all with this score.
+        if min_score == ranked_files_with_score[10][1]: # There are more than 10 files with the top score, add all with this score.
             for file, score in ranked_files_with_score[10:]:
                 if score == min_score:
                     ranked_files.append(file)
                 else:
                     break
         
-        elif min_score == ranked_files_with_score[10][1]: # If there are more files with the same score as the tenth, remove all with that score to prevent a too long list of results.
-            for file, score in reversed(ranked_files_with_score[:10]):
-                if score == min_score:
-                    ranked_files.remove(file)
-                else:
-                    break
+        # elif min_score == ranked_files_with_score[10][1]: # If there are more files with the same score as the tenth, remove all with that score to prevent a too long list of results.
+        #     for file, score in reversed(ranked_files_with_score[:10]):
+        #         if score == min_score:
+        #             ranked_files.remove(file)
+        #         else:
+        #             break
 
     return ranked_files
 
@@ -64,8 +64,8 @@ def query_bplus_tree(filename: str) -> list[str]:
     They are ranked first by number of operators in common, then by difference between number of operands.
     If the MathML cannot be parsed, returns an empty list.
     '''
-    symbols = set(operator_extractor(filename, ""))
-    num_operands = operand_extractor(filename, "")
+    symbols = set(operator_extractor(filename, ''))
+    num_operands = operand_extractor(filename, '')
 
     with open('./new_pickled_bplus_tree.txt', 'rb') as file:
         bplustree = pickle.load(file)

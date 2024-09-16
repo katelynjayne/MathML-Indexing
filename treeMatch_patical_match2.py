@@ -68,7 +68,7 @@ class FastTreeMatch:
             # print("targetTree")
             # print(len(self.targetTree.nodes))
         except Exception as e:
-            # print(e)
+            print(e)
             return None
         scores={}
         for f in dataset:
