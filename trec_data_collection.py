@@ -25,6 +25,7 @@ create_result_file("bplus", bplus_approach, None)
 B+: no result for 2 (no operators) or 9 (malformed)
 Top-rated answer for all, except second rated for 6
 0.0665
+AFTER cleaning:  0.0522
 Seq: 2 literally returned 1108 results lol same result for 6
 0.1349
 Sec: 14, 4 returned nothing
