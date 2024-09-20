@@ -311,4 +311,23 @@ def wiki_data_analysis():
     plt.savefig("./comparison-results/fastest-NTCIR.png")
     plt.show()
 
-wiki_data_analysis()
+# wiki_data_analysis()
+
+def approach_analysis():
+    df = pandas.read_csv("./comparison-results/approach_0_scores.csv")
+    max_score = df["Max Score"]
+    avg_score = df["Avg Score"]
+    top_avg_score = df["Top Ten Avg Score"]
+    print(avg_df(max_score))
+    print(avg_df(avg_score))
+    print(avg_df(top_avg_score))
+
+    cleaned_max = [x for x in max_score if x != 0]
+    cleaned_avg = [x for x in avg_score if x != 0]
+    cleaned_top_avg = [x for x in top_avg_score if x != 0]
+
+    print(mean(cleaned_max))
+    print(mean(cleaned_avg))
+    print(mean(cleaned_top_avg))
+
+approach_analysis()
