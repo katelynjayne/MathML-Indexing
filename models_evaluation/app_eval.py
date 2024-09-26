@@ -2,8 +2,10 @@ import treeMatch_patical_match2 as tm
 import pandas
 import os
 from query_tree import get_avg_score, get_max_score
+import unicodedata
 
 def find_file(article, num):
+    article = unicodedata.normalize('NFC', article)
     path = "./../../Downloads/NTCIR-12_Data/MathArticles/"
     for folder in os.listdir(path):
         articles = os.listdir(f"{path}{folder}")
@@ -30,13 +32,13 @@ if __name__ == "__main__":
 
     df = pandas.read_csv("./comparison-results/all_approaches_NTCIR-12.csv")
     files = df["File"]
-
-    with open("./comparison-results/approach_0_scores.csv", 'w', encoding="utf-8") as file:
+    total_not_found = 0
+    with open("./comparison-results/approach_0_scores_3.csv", 'w', encoding="utf-8") as file:
         file.write("Query Number,File,Max Score,Avg Score,Top Ten Avg Score,Number of Files not Found,Total Files Returned\n")
         idx = 0
         for query in quer_result_dict:
             while query != idx:
-                file.write(f"{idx+1},{files[idx]},0,0,0,0\n")
+                file.write(f"{idx+1},{files[idx]},0,0,0,0,0\n")
                 idx += 1
             idx += 1
             answer_file = f"./../../Downloads/NTCIR-12_Data/{files[query]}"
@@ -52,17 +54,17 @@ if __name__ == "__main__":
                     res_filepaths.append(filepath)
                 else:
                     files_not_found += 1
+            total_not_found += files_not_found
             fast_match = tm.FastTreeMatch()
             scores = fast_match.run(answer_file, res_filepaths)
             max_score = get_max_score(scores)
             avg_score = get_avg_score(scores, res_filepaths)
             top_ten_avg_score = get_avg_score(scores, res_filepaths[:10])
             file.write(f"{query+1},{files[query]},{max_score},{avg_score},{top_ten_avg_score},{files_not_found},{len(results)}\n")
-
-
+    print(f"NOT FOUND: {total_not_found}")
 
     '''
-    FOUND: 15532 NOT FOUND: 1808
-    that gives us a rate of 0.8957324106113034
+    FOUND: 15532 NOT FOUND: 1808 -> 1545
+
     '''
 

@@ -1,6 +1,6 @@
 from data_collection import bplus_approach, sequential_approach, secondary_approach
 from clustering_and_secondary import get_entire_dataset, secondary_indexing
-from clean_query import clean_query
+from trec_eval.clean_query import clean_query
 
 def create_result_file(type: str, approach, structure):
     with open(f"{type}_res_2.tsv", 'w', encoding='utf-8') as res:

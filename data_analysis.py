@@ -318,6 +318,15 @@ def approach_analysis():
     max_score = df["Max Score"]
     avg_score = df["Avg Score"]
     top_avg_score = df["Top Ten Avg Score"]
+    num_files = df["Total Files Returned"]
+    filenames = df["File"]
+    not_found = df["Number of Files not Found"]
+
+    for score,file in zip(max_score, filenames):
+        if score != 1 and score != 0:
+            print(file)
+  
+
     print(avg_df(max_score))
     print(avg_df(avg_score))
     print(avg_df(top_avg_score))
@@ -330,4 +339,45 @@ def approach_analysis():
     print(mean(cleaned_avg))
     print(mean(cleaned_top_avg))
 
-approach_analysis()
+# approach_analysis()
+
+'''
+MathArticles/wpmath0000016/Multiple_kernel_learning/33.xml
+--> it's 33 in our dataset but 34 in the html file?
+Average Max Score: 0.8409815271546836
+Average Avg Score: 0.6009970402079011
+Average Top Ten Avg Score: 0.6754470773591297
+0.9699902273987122
+0.6931915111971177
+0.7790623729632407
+'''
+
+# with open("./comparison-results/APP0_TEST_TIMES_all_approaches_NTCIR12_latex_queries_csv.csv", 'r') as file:
+#     times = []
+#     for line in file.readlines():
+#         times.append(float(line.split()[1]))
+#     print(mean(times))
+
+def tangent_analysis():
+    df = pandas.read_csv("./comparison-results/tangent_scores.csv")
+    max_score = df["Max Score"]
+    avg_score = df["Avg Score"]
+    not_found = df["Number of Files not Found"]
+    print(sum(list(not_found)))
+    print(avg_df(max_score))
+    print(avg_df(avg_score))
+
+
+    weird = 0
+    our_fault_maybe = 0
+    for max, num_missing in zip(max_score, not_found):
+        if max != 1:
+            if num_missing == 0:
+                weird += 1
+            else:
+                our_fault_maybe += 1
+    print(weird)
+    print(our_fault_maybe)
+
+
+tangent_analysis()

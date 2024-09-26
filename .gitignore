@@ -4,6 +4,4 @@
 # ignore any test xml files in the directory
 __pycache__
 
-filter_useable_files.py
-
 Queries
