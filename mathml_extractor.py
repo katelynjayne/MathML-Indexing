@@ -68,18 +68,33 @@ def operator_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}")
         
     return keywords
 
-def operand_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}"):
+def operand_extractor(filename: str, ns="{http://www.w3.org/1998/Math/MathML}",version=1):
     '''
     Given the name of a MathML file, operand_extractor() returns the number of identifiers and numbers in the formula.
     If the file cannot be parsed, returns 0.
+    version=1 : returns one number representing numbers + identifiers
+    version=2 : returns the tuple (numbers, identifiers)
+    version=3 : same as version 2, but considers any msub nodes as one identifier only
     '''
     root = make_tree(filename)
-    if not root:
-        return 0
+    if root is None:
+        return 0, 0
     
-    numbers = root.findall(f".//{ns}mn")
-    identifiers = root.findall(f".//{ns}mi")
-    return len(numbers) + len(identifiers)
+    numbers = len(root.findall(f".//{ns}mn"))
+    identifiers = len(root.findall(f".//{ns}mi"))
+    if version == 3:
+        for sub in root.findall(f".//{ns}msub"):
+            idens = sub.findall(f".//{ns}mi")
+            nums = sub.findall(f".//{ns}mn")
+            counter += 1
+            numbers -= len(nums)
+            identifiers -= len(idens)
+            identifiers += 1
+    
+    if version == 1:
+        return numbers + identifiers
+    return numbers, identifiers
+
 
 def get_dominant_operator(filename: str, ns="{http://www.w3.org/1998/Math/MathML}"):
     '''

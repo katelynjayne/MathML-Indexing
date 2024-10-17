@@ -22,18 +22,20 @@ def bplustree_builder():
             answer_path = f"{dataset_path}{folder}/answers/"
             for file in os.listdir(question_path):
                 whole_path = question_path + file
-                num_operands = operand_extractor(whole_path)
+                numbers,identifiers = operand_extractor(whole_path, version=2)
                 indexes = operator_extractor(whole_path)
                 for index in indexes:
-                    bplustree.insert(index, (whole_path, num_operands))
+                    bplustree.insert(index, (whole_path, numbers, identifiers))
             for file in os.listdir(answer_path):
                 whole_path = answer_path + file
-                num_operands = operand_extractor(whole_path)
+                numbers, identifiers = operand_extractor(whole_path, version=2)
                 indexes = operator_extractor(whole_path)
                 for index in indexes:
-                    bplustree.insert(index, (whole_path, num_operands))
+                    bplustree.insert(index, (whole_path, numbers, identifiers))
 
-    with open('./pickled_bplus_tree.txt', 'wb') as file:
+    bplus_tree_add(bplustree)
+
+    with open('./bplus_tree_sub_sensitive.txt', 'wb') as file:
         pickle.dump(bplustree,file)
     # bplustree.show_all_data()
 
@@ -67,9 +69,9 @@ def btree_builder():
         pickle.dump(btree, file)
     # btree.printTree(btree.root)
 
-def bplus_tree_add():
-    with open("./pickled_bplus_tree.txt", "rb") as file:
-        bplustree = pickle.load(file)
+def bplus_tree_add(bplustree):
+    # with open("./pickled_bplus_tree.txt", "rb") as file:
+    #     bplustree = pickle.load(file)
 
     folders = os.listdir(ntcir_path)
     for folder in folders:
@@ -78,13 +80,13 @@ def bplus_tree_add():
             path_to_article = f"{ntcir_path}{folder}/{article}/"
             for file in os.listdir(path_to_article):
                 whole_path = path_to_article + file
-                num_operands = operand_extractor(whole_path, "")
+                numbers, identifiers = operand_extractor(whole_path, "", version=2)
                 indexes = operator_extractor(whole_path, "")
                 for index in indexes:
-                    bplustree.insert(index, (whole_path, num_operands))
+                    bplustree.insert(index, (whole_path, numbers, identifiers))
 
-    with open('./new_pickled_bplus_tree.txt', 'wb') as file:
-        pickle.dump(bplustree, file)
+    # with open('./new_pickled_bplus_tree.txt', 'wb') as file:
+    #     pickle.dump(bplustree, file)
     
 
 def b_tree_add():
@@ -107,16 +109,4 @@ def b_tree_add():
         pickle.dump(btree, file)
 
 if __name__ == "__main__":
-    # print("Editing B+ tree...")
-    # bplus_tree_add()
-    # print("B+ tree finished!")
-    print("Editing B tree...")
-    b_tree_add()
-    print("B tree finished!")
-
-    with open("./new_pickled_b_tree.txt", 'rb') as file:
-        btree = pickle.load(file)
-
-    # btree.printTree(btree.root)
-    node, idx = btree.search("succ")
-    print(len(node.values[idx])) # should be 21!
+    bplustree_builder()

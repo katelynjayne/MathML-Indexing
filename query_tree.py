@@ -67,7 +67,7 @@ def query_bplus_tree(filename: str) -> list[str]:
     symbols = set(operator_extractor(filename, ''))
     num_operands = operand_extractor(filename, '')
 
-    with open('./new_pickled_bplus_tree.txt', 'rb') as file:
+    with open('./bplus_tree_wiki.txt', 'rb') as file:
         bplustree = pickle.load(file)
 
     counts = {}
@@ -110,10 +110,5 @@ def query_b_tree(filename):
 
 
 if __name__ == "__main__":
-    bplus_res = query_bplus_tree("./../../Downloads/NTCIR-12_Data/MathArticles/wpmath0000003/Intuitionistic_type_theory/24.xml")
-    b_res = query_b_tree("./../../Downloads/NTCIR-12_Data/MathArticles/wpmath0000003/Intuitionistic_type_theory/24.xml")
-    print(bplus_res == b_res)
-    
-    print(f"IN COMMON: {len([elem for elem in bplus_res if elem in b_res])}")
-    print(f"DIFFERS: {len(set(bplus_res) ^ set(b_res))}")
+    pass
     
