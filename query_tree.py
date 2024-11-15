@@ -1,4 +1,4 @@
-from mathml_extractor import operator_extractor, operand_extractor
+from mathml_extractor import operator_extractor, operand_extractor, structure_scores
 import pickle
 from statistics import mean
 
@@ -65,24 +65,28 @@ def query_bplus_tree(filename: str) -> list[str]:
     If the MathML cannot be parsed, returns an empty list.
     '''
     symbols = set(operator_extractor(filename, ''))
-    num_operands = operand_extractor(filename, '')
+    numbers, identifiers = operand_extractor(filename, '', version=2)
+    # og_above, og_sup, og_sub, og_below, og_contains, og_lsup, og_lsub = structure_scores(filename, "")
 
-    with open('./bplus_tree_wiki.txt', 'rb') as file:
+    with open('./bplus_tree_idens_extracted.txt', 'rb') as file:
         bplustree = pickle.load(file)
 
     counts = {}
     for symbol in symbols:
         retrieved = bplustree.retrieve(symbol)
         if retrieved:
-            for couple in retrieved:
-                file = couple[0]
-                operands = couple[1]
-                diff = -abs(num_operands - operands) 
+            for tuple in retrieved:
+                file = tuple[0]
+                nums = tuple[1]
+                idens = tuple[2]
+                # above, sup, sub, below, contains, lsup, lsub = tuple[3]
+                operands_diff = -abs(numbers - nums) + -abs(identifiers - idens)
                 # The negative absolute value is taken so that the greater difference will be a smaller number for ranking purposes.
+                # struct_diff = -abs(og_above - above) + -abs(og_sup - sup) + -abs(og_sub - sub) + -abs(og_below - below) + -abs(og_contains - contains) + -abs(og_lsup - lsup) + -abs(og_lsub - lsub)
                 if file in counts:
                     counts[file][0] += 1
                 else:
-                    counts[file] = [1, diff]
+                    counts[file] = [1, operands_diff]
 
     return get_top_matches(counts)
 

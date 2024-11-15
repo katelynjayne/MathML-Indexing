@@ -1,6 +1,6 @@
 from bplustree_with_visualizer import GraphableBPlusTree
 import os
-from mathml_extractor import operator_extractor, operand_extractor
+from mathml_extractor import operator_extractor, operand_extractor, structure_scores
 import pickle
 from B_Tree import BTree
 
@@ -35,7 +35,7 @@ def bplustree_builder():
 
     bplus_tree_add(bplustree)
 
-    with open('./bplus_tree_sub_sensitive.txt', 'wb') as file:
+    with open('./bplus_tree_structure_scoring.txt', 'wb') as file:
         pickle.dump(bplustree,file)
     # bplustree.show_all_data()
 
@@ -81,9 +81,10 @@ def bplus_tree_add(bplustree):
             for file in os.listdir(path_to_article):
                 whole_path = path_to_article + file
                 numbers, identifiers = operand_extractor(whole_path, "", version=2)
+                struct_scores = structure_scores(whole_path, "")
                 indexes = operator_extractor(whole_path, "")
                 for index in indexes:
-                    bplustree.insert(index, (whole_path, numbers, identifiers))
+                    bplustree.insert(index, (whole_path, numbers, identifiers, struct_scores))
 
     # with open('./new_pickled_bplus_tree.txt', 'wb') as file:
     #     pickle.dump(bplustree, file)
